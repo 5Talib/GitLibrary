@@ -1,6 +1,6 @@
 # Git Library
 
-A nice project with a nice description
+Discover GitHub Profiles and Repositories
 
 ---
 ## Requirements
