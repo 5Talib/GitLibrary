@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitLibrary - Discover GitHub Profiles and Repositories</title>
+    <link rel="stylesheet" href="landingPage.css" />
+  </head>
+  <body>
+    <header>
+      <h1>GitLibrary</h1>
+      <p>Discover GitHub Profiles and Repositories</p>
+    </header>
+    <main>
+      <section class="search-section">
+        <div class="left">
+          <h2>Search GitHub Profiles</h2>
+          <form id="githubSearchForm">
+            <input
+              type="text"
+              id="githubUsername"
+              placeholder="Enter GitHub Username"
+            />
+            <button id="search-button" type="button">Search</button>
+          </form>
+        </div>
+      </section>
+      <section class="description">
+        <div class="right">
+          <h2>Get Started</h2>
+          <div>Enter a GitHub username in the search bar.</div>
+          <div>Explore the user's profile information.</div>
+          <div>Dive into their repositories to see the languages used.</div>
+          <div>Use the filter bar to find specific repositories.</div>
+        </div>
+        <div class="features-section">
+          <h2>Key Features</h2>
+          <div>User Profile Lookup</div>
+          <div>Repository Insight</div>
+          <div>Filter Repositories</div>
+        </div>
+        <div class="why-choose-section">
+          <h2>Why Choose GitLibrary</h2>
+          <div>Effortless Discovery</div>
+          <div>User-Friendly Interface</div>
+          <div>Comprehensive Information</div>
+          <div>Time-Saving</div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <h2>GitLibrary - Your gateway to the world of GitHub!</h2>
+      <div class="Copyright">
+        <div>Copyright</div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-c-circle"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.146 4.992c-1.212 0-1.927.92-1.927 2.502v1.06c0 1.571.703 2.462 1.927 2.462.979 0 1.641-.586 1.729-1.418h1.295v.093c-.1 1.448-1.354 2.467-3.03 2.467-2.091 0-3.269-1.336-3.269-3.603V7.482c0-2.261 1.201-3.638 3.27-3.638 1.681 0 2.935 1.054 3.029 2.572v.088H9.875c-.088-.879-.768-1.512-1.729-1.512"
+          />
+        </svg>
+        <div>2024 Talib Khan</div>
+      </div>
+      <div class="info">
+        <div>Phone: +918120116330</div>
+        <div>Address: IIT BHU, Varanasi, UP</div>
+        <div>Email: talibbkhann555@gmail.com</div>
+      </div>
+    </footer>
+  </body>
+  <script>
+    document.getElementById("search-button").addEventListener("click", () => {
+      const username = document.getElementById("githubUsername").value.trim();
+      if (!username || !username.trim().length) return;
+        window.location.href = `/username/${username}`;
+    });
+  </script>
+</html>

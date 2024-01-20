@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitLibrary - Discover GitHub Profiles and Repositories</title>
+    <!-- <link rel="stylesheet" href="index.css" />
+     -->
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        font-family: "Arial", sans-serif;
+      }
+      .loader {
+        border: 8px solid #f3f3f3;
+        border-top: 8px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        position: absolute;
+        top: 69%;
+        left: 50%;
+        margin-top: -25px;
+        margin-left: -25px;
+        margin: auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2rem 3rem;
+        box-shadow: 0px 5px 5px -5px rgba(0, 0, 0, 0.5);
+      }
+      nav > .title {
+        font-size: xx-large;
+        font-weight: bolder;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        padding: 2rem 3rem;
+        margin: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .head {
+        display: none;
+        align-items: center;
+        justify-content: start;
+        gap: 4rem;
+        flex-wrap: wrap;
+      }
+      .profile-photo {
+        border-radius: 50%;
+      }
+      .profile-photo > img {
+        border: 1px solid #9e9e9e;
+        padding: 0.3rem;
+        width: 10rem;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: auto;
+      }
+      .content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .name {
+        font-size: 1.6rem;
+        font-size: 700;
+      }
+      .github {
+        display: none;
+        gap: 1rem;
+        align-items: center;
+      }
+      .repo-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+      .repo-name {
+        font-size: 1.6rem;
+        color: rgb(45, 114, 232);
+      }
+      .card {
+        border: 0.3px solid #9e9e9e;
+        border-radius: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+        padding: 1em;
+      }
+      .languageContainer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8em;
+      }
+      a {
+        text-decoration: none;
+        color: black;
+      }
+      .language {
+        background-color: rgb(45, 114, 232);
+        padding: 0.75em;
+        color: white;
+        border-radius: 0.5rem;
+        font-size: 0.8em;
+      }
+
+      .search-bar {
+        display: flex;
+        width: 20.5rem;
+        height: 3rem;
+        padding: 0rem 1rem;
+        align-items: center;
+        gap: 4rem;
+        flex-shrink: 0;
+        border-radius: 1.25rem;
+        border: 0.3px solid #9e9e9e;
+        justify-content: space-between;
+      }
+      .search-input {
+        border: none;
+        color: #9e9e9e;
+        font-family: Urbanist;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        width: 10rem;
+      }
+      input:focus {
+        outline: none;
+      }
+      .search-btn {
+        align-items: center;
+        display: flex;
+        height: 2rem;
+        padding: 0rem 0.75rem;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 1.25rem;
+        background: var(--Primary, rgb(45, 114, 232));
+        border: none;
+        color: #ffffff;
+        cursor: pointer;
+      }
+      .filter-bar {
+        display: none;
+      }
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.2rem;
+      }
+      .prev,
+      .next {
+        background-color: rgb(45, 114, 232);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+        height: 1rem;
+        width: 1.5rem;
+        cursor: pointer;
+        border-radius: 0.4rem;
+      }
+      .pages {
+        display: flex;
+        align-items: center;
+        gap: 0.2rem;
+        flex-wrap: wrap;
+      }
+      .page {
+        cursor: pointer;
+        height: 0.9rem;
+        width: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: rgb(45, 114, 232);
+        color: white;
+        border-radius: 0.4rem;
+      }
+      .prev:hover,
+      .next:hover {
+        background-color: rgb(70, 130, 233);
+      }
+      .page:hover {
+        background-color: rgb(70, 130, 233);
+      }
+      .select-form {
+        display: flex;
+        flex-direction: column;
+        max-width: 3.5rem;
+      }
+
+      label {
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #333;
+      }
+
+      select {
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+      }
+
+      select::-ms-expand {
+        display: none;
+      }
+
+      select {
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M7 10l5 5 5-5z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 3px top 50%;
+        background-size: 18px auto;
+      }
+
+      select:hover,
+      select:focus {
+        border-color: #666;
+      }
+      footer {
+        display: none;
+        padding: 2rem 3rem;
+        padding-top: 0rem;
+        margin: 0.5rem;
+      }
+      .error-card {
+        background-color: #ffcccc;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: auto;
+        width: fit-content;
+      }
+      @media (max-width: 900px) {
+        .repo-container {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 2rem;
+          width: 100%;
+        }
+        .card {
+          min-width: 100%;
+        }
+      }
+      @media (max-width: 650px) {
+        nav {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1em;
+          padding: 2rem 3rem;
+          box-shadow: 0px 5px 5px -5px rgba(0, 0, 0, 0.5);
+        }
+        .filter-bar {
+          width: 90%;
+          margin: auto 0rem;
+        }
+        .head {
+          gap: 2rem;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="title"><a href="http://localhost:4000/">GitLibrary</a></div>
+      <div class="search-bar">
+        <form>
+          <input
+            class="search-input"
+            type="text"
+            name="search"
+            value=""
+            placeholder="Enter Github Account"
+            id="githubUsername"
+          />
+        </form>
+        <button onclick="getUserName()" class="search-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+          >
+            <path
+              d="M12.436 11.7301L14.389 13.6821C14.48 13.7764 14.5304 13.9027 14.5293 14.0338C14.5282 14.1649 14.4756 14.2903 14.3829 14.383C14.2902 14.4757 14.1648 14.5283 14.0337 14.5294C13.9026 14.5306 13.7763 14.4802 13.682 14.3891L11.729 12.4361C10.4527 13.5295 8.80257 14.0862 7.12477 13.9892C5.44698 13.8922 3.87196 13.1491 2.73021 11.9159C1.58846 10.6827 0.968739 9.05519 1.00108 7.3749C1.03343 5.69462 1.71532 4.09217 2.90369 2.90381C4.09205 1.71545 5.6945 1.03355 7.37478 1.00121C9.05507 0.968861 10.6826 1.58858 11.9158 2.73033C13.149 3.87208 13.8921 5.4471 13.989 7.1249C14.086 8.80269 13.5294 10.4528 12.436 11.7291V11.7301ZM7.49996 13.0001C8.95865 13.0001 10.3576 12.4206 11.389 11.3892C12.4205 10.3577 13 8.95877 13 7.50008C13 6.04139 12.4205 4.64244 11.389 3.61099C10.3576 2.57954 8.95865 2.00008 7.49996 2.00008C6.04127 2.00008 4.64232 2.57954 3.61087 3.61099C2.57942 4.64244 1.99996 6.04139 1.99996 7.50008C1.99996 8.95877 2.57942 10.3577 3.61087 11.3892C4.64232 12.4206 6.04127 13.0001 7.49996 13.0001Z"
+              fill="white"
+            />
+          </svg>
+          <div>Search</div>
+        </button>
+      </div>
+    </nav>
+    <div class="loader"></div>
+    <div class="container">
+      <div class="head">
+        <div class="profile-photo">
+          <img src="" />
+        </div>
+        <div class="content">
+          <div class="name"></div>
+          <div class="bio"></div>
+          <div class="location"></div>
+          <div class="twitter"></div>
+        </div>
+      </div>
+      <div class="github">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          fill="currentColor"
+          class="bi bi-link"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9q-.13 0-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z"
+          />
+          <path
+            d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4 4 0 0 1-.82 1H12a3 3 0 1 0 0-6z"
+          />
+        </svg>
+        <div class="github-link"></div>
+      </div>
+      <input
+        class="search-bar filter-bar"
+        type="text"
+        name=""
+        id="myinput"
+        placeholder="Filter Github Repo of this page"
+      />
+      <div class="repo-container"></div>
+    </div>
+    <footer>
+      <div class="repo-number">
+        <form class="select-form">
+          <label for="count"></label>
+          <select id="count" name="count">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="75">75</option>
+            <option value="100">100</option>
+          </select>
+        </form>
+      </div>
+      <div class="pagination">
+        <div class="prev">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="white"
+            class="bi bi-arrow-left"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
+            />
+          </svg>
+        </div>
+        <div class="pages"></div>
+        <div class="next">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="white"
+            class="bi bi-arrow-right"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
+            />
+          </svg>
+        </div>
+      </div>
+    </footer>
+  </body>
+  <script>
+    // script.js
+    function getUserName() {
+      const username = document.getElementById("githubUsername").value.trim();
+      window.location.href = `/username/${username}`;
+    }
+
+    window.onload = async function getUserData() {
+      try {
+        showLoader();
+
+        const usernameResponse = await fetch("http://localhost:4000/global", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        const userName = await usernameResponse.json();
+        const response = await fetch(`/user/${userName}`);
+
+        if (response.status === 500) {
+          document.querySelector(".content").style.display = "none";
+          document.querySelector("img").style.display = "none";
+          const container = document.querySelector(".head");
+          container.style.display = "block";
+
+          const errorCard = document.createElement("div");
+          errorCard.className = "error-card";
+
+          const errorMessage = document.createElement("div");
+          errorMessage.textContent =
+            "Oops! Something went wrong. Unable to fetch user data.";
+          errorMessage.className = "error-message";
+          errorCard.style.display = "block";
+          errorCard.appendChild(errorMessage);
+          container.appendChild(errorCard);
+
+          return {};
+        }
+
+        const userData = await response.json();
+        // hideLoader();
+
+        document.querySelector(".profile-photo img").src = userData.avatar_url;
+        document.querySelector(".name").innerText = `${
+          userData.name || "Not available"
+        }`;
+        document.querySelector(".bio").innerText = `${
+          userData.bio || "Bio Not available"
+        }`;
+        document.querySelector(".location").innerText = `${
+          userData.location || "Location Not available"
+        }`;
+        document.querySelector(".twitter").innerText = `Twitter: ${
+          userData.twitter_username || "Not available"
+        }`;
+        document.querySelector(
+          ".github-link"
+        ).innerHTML = `<a href="${userData.html_url}">${userData.html_url}</a>`;
+        document.querySelector(".head").style.display = "flex";
+        document.querySelector(".github").style.display = "flex";
+        document.querySelector(".filter-bar").style.display = "block";
+      } catch (error) {
+        console.log("Error fetching GitHub user data:", error);
+        hideLoader();
+      }
+    };
+
+    const pageInfo = getRepos();
+    var currentPage = 1;
+    var repoLimit = 10;
+    var allPages = pageInfo.totalPages;
+    setPages(pageInfo);
+
+    async function getRepos(page = 1, pageSize = 10) {
+      try {
+        document.querySelector("footer").style.display = "none";
+        showLoader();
+        const repoContainer = document.querySelector(".repo-container");
+        while (repoContainer.firstChild) {
+          repoContainer.removeChild(repoContainer.firstChild);
+        }
+        const usernameResponse = await fetch("http://localhost:4000/global", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        const userName = await usernameResponse.json();
+        const response = await fetch(
+          `http://localhost:4000/user/${userName}/repos`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              page: page,
+              pageSize: pageSize,
+            }),
+          }
+        );
+        if (response.status === 500) {
+          const container = document.querySelector(".repo-container");
+          container.style.gridTemplateColumns = "1fr";
+          const errorCard = document.createElement("div");
+          errorCard.className = "error-card";
+
+          const errorMessage = document.createElement("div");
+          errorMessage.textContent =
+            "Oops! Something went wrong. Unable to fetch repository data.";
+          errorMessage.className = "error-message";
+
+          errorCard.appendChild(errorMessage);
+          container.appendChild(errorCard);
+          hideLoader();
+          return {};
+        }
+
+        const userRepo = await response.json();
+
+        userRepo.data.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          const repoName = document.createElement("div");
+          repoName.className = "repo-name";
+          repoName.textContent = `${item.name}`;
+
+          const repoDescription = document.createElement("div");
+          repoDescription.className = "repo-description";
+          repoDescription.textContent = `${
+            item.description || "No description available"
+          }`;
+
+          const visitRepo = document.createElement("div");
+          visitRepo.className = "visit-repo";
+          const visitRepoLink = document.createElement("a");
+          visitRepoLink.href = item.url;
+          visitRepoLink.textContent = `${item.url}`;
+          visitRepo.appendChild(visitRepoLink);
+
+          repoContainer.appendChild(card);
+          const languageContainer = document.createElement("div");
+
+          languageContainer.className = "languageContainer";
+          const repoLanguages = item.languages;
+          for (const lang of repoLanguages) {
+            const language = document.createElement("div");
+            language.className = "language";
+            language.textContent = lang;
+
+            languageContainer.appendChild(language);
+          }
+          card.appendChild(repoName);
+          card.appendChild(repoDescription);
+          card.appendChild(visitRepo);
+          card.appendChild(languageContainer);
+          document.querySelector("footer").style.display = "block";
+          hideLoader();
+        });
+        return {
+          totalPages: userRepo.totalPages,
+          page: userRepo.page,
+          pageSize: userRepo.pageSize,
+        };
+      } catch (error) {
+        console.log("Error fetching GitHub user repo:", error);
+        hideLoader();
+      }
+    }
+
+    async function setPages(pageInfo) {
+      const { totalPages } = await pageInfo;
+      if (!totalPages) return;
+      const pages = document.querySelector(".pages");
+      while (pages.firstChild) {
+        pages.removeChild(pages.firstChild);
+      }
+      for (let j = 1; j <= totalPages; j++) {
+        const page = document.createElement("div");
+        page.className = "page";
+        page.textContent = j;
+        pages.appendChild(page);
+      }
+      document.querySelector(".page").style.backgroundColor = "white";
+      document.querySelector(".page").style.border =
+        "1px solid rgb(70, 130, 233)";
+      document.querySelector(".page").style.color = "rgb(70, 130, 233)";
+    }
+
+    function showLoader() {
+      const loader = document.querySelector(".loader");
+      loader.style.display = "block";
+    }
+
+    function hideLoader() {
+      const loader = document.querySelector(".loader");
+      loader.style.display = "none";
+    }
+
+    document.getElementById("myinput").addEventListener("input", () => {
+      let filter = document.getElementById("myinput").value.toUpperCase();
+      let myData = document.querySelector(".repo-container");
+      let data = myData.getElementsByClassName("card");
+      for (let i = 0; i < data.length; i++) {
+        let repo = data[i].getElementsByClassName("repo-name")[0];
+
+        if (repo) {
+          let textValue = repo.textContent;
+          if (textValue.toUpperCase().indexOf(filter) > -1) {
+            data[i].style.display = "";
+          } else {
+            data[i].style.display = "none";
+          }
+        }
+      }
+    });
+
+    function setCurrentPageStyle() {
+      const pages = document.querySelectorAll(".page");
+      pages.forEach((page, index) => {
+        page.style.backgroundColor =
+          index + 1 === currentPage ? "white" : "rgb(45, 114, 232)";
+        page.style.border =
+          index + 1 === currentPage ? "1px solid rgb(70, 130, 233)" : "none";
+        page.style.color =
+          index + 1 === currentPage ? "rgb(70, 130, 233)" : "white";
+      });
+    }
+
+    document.querySelector(".pages").addEventListener("click", (event) => {
+      const clickedPage = Number(event.target.textContent);
+      currentPage = clickedPage;
+      setCurrentPageStyle();
+      getRepos(currentPage, repoLimit);
+    });
+
+    document.querySelector(".prev").addEventListener("click", () => {
+      if (currentPage != 1) {
+        currentPage -= 1;
+        setCurrentPageStyle();
+        getRepos(currentPage, repoLimit);
+      }
+    });
+
+    document.querySelector(".next").addEventListener("click", () => {
+      if (currentPage != allPages) {
+        currentPage += 1;
+        setCurrentPageStyle();
+        getRepos(currentPage, repoLimit);
+      }
+    });
+
+    const selectElement = document.getElementById("count");
+    selectElement.addEventListener("change", (e) => {
+      const pageSize = e.target.value;
+      repoLimit = Number(pageSize);
+      const pageInfo = getRepos(1, repoLimit);
+      setPages(pageInfo);
+    });
+  </script>
+</html>
