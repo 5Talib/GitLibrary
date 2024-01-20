@@ -87,7 +87,7 @@ app.post("/user/:username/repos", async (req, res) => {
       repos.push({
         name,
         description: repoResponse.data[i].description,
-        url: repoResponse.data[i].url,
+        url: repoResponse.data[i].html_url,
         languages: Object.keys(langResponse.data),
       });
     }
