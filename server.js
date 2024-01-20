@@ -1,11 +1,8 @@
-import axios, { HttpStatusCode } from "axios";
-import express from "express";
-import { dirname } from "path";
-import bodyParser from "body-parser";
-import "dotenv/config";
-// import { fetchGitHubUserData, fetchGitHubUserRepo } from "./index.js";
-
-const __dirname = dirname("");
+const axios = require("axios");
+const express = require("express");
+const dirname = require("path");
+const bodyParser = require("body-parser");
+require("dotenv").config();
 const app = express();
 const PORT = 4000;
 
@@ -34,7 +31,7 @@ app.get("/user/:username", async (req, res) => {
     );
     const userData = userResponse.data;
     // res.redirect("user.html");
-    res.status(HttpStatusCode.Ok).send({
+    res.status(axios.HttpStatusCode.Ok).send({
       avatar_url: userData.avatar_url,
       name: userData.name,
       bio: userData.bio,
@@ -44,7 +41,7 @@ app.get("/user/:username", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching GitHub user data:", error);
-    res.sendStatus(HttpStatusCode.InternalServerError);
+    res.sendStatus(axios.HttpStatusCode.InternalServerError);
   }
 });
 
@@ -95,7 +92,7 @@ app.post("/user/:username/repos", async (req, res) => {
       });
     }
 
-    res.status(HttpStatusCode.Ok).send({
+    res.status(axios.HttpStatusCode.Ok).send({
       data: [...repos],
       page,
       pageSize,
@@ -103,7 +100,7 @@ app.post("/user/:username/repos", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.sendStatus(HttpStatusCode.InternalServerError);
+    res.sendStatus(axios.HttpStatusCode.InternalServerError);
   }
 });
 
@@ -111,4 +108,4 @@ app.listen(PORT, () => {
   console.log("Server Running on port:", PORT);
 });
 
-export default app;
+module.exports = app;
