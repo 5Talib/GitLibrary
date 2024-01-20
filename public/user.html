@@ -427,7 +427,7 @@
       try {
         showLoader();
 
-        const usernameResponse = await fetch("http://localhost:4000/global", {
+        const usernameResponse = await fetch("/global", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
         });
@@ -496,13 +496,13 @@
         while (repoContainer.firstChild) {
           repoContainer.removeChild(repoContainer.firstChild);
         }
-        const usernameResponse = await fetch("http://localhost:4000/global", {
+        const usernameResponse = await fetch("/global", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
         });
         const userName = await usernameResponse.json();
         const response = await fetch(
-          `http://localhost:4000/user/${userName}/repos`,
+          `/user/${userName}/repos`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
